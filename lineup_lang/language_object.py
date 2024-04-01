@@ -14,6 +14,9 @@ class LanguageObjectInterface:
                 f"'{function_name}' not exist in '{self}'")
         return self.functions[function_name](*args)
 
+    def close(self):
+        pass
+
     def reset(self):
         pass
 
@@ -41,14 +44,22 @@ class LanguageExecutorInterface:
     def execute(self, script: List[List[str]]) -> Any:
         pass
 
+    def close(self) -> None:
+        for core in self._core:
+            core.close()
+
     def reset(self) -> None:
-        pass
+        for core in self._core:
+            core.reset()
 
     def __str__(self) -> str:
         return f"<LUPE:{self.__class__.__name__}>"
 
 
 class LanguageInterface:
+    def close(self):
+        pass
+
     def execute_script(self, script: str) -> Any:
         pass
 

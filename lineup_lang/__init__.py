@@ -65,6 +65,9 @@ class Language(LanguageInterface):
             script = script.replace(match.group(0), "\"" + value + "\"")
         return script
 
+    def close(self):
+        self._executor.close()
+
     def execute_script(self, script: str) -> Any:
         script_lines = []
         for line in script.split("\n"):

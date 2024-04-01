@@ -25,8 +25,7 @@ class DefaultExecutor(LanguageExecutorInterface):
 
     def reset(self) -> None:
         self.stop = False
-        for core in self._core:
-            core.reset()
+        super().reset()
 
     def execute_line(self, line: List[str]):
         if line[0] not in self._core_function:

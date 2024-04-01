@@ -22,6 +22,11 @@ class VariableObject(CoreObjectInterface):
             "VAR": self._variable,
         }
 
+    def close(self):
+        for key in self.variables.keys():
+            if type(self.variables[key]) is LanguageObjectInterface:
+                self.variables[key].close()
+
     def reset(self):
         variables_delete = [key for key in self.variables.keys()
                             if key not in self.default_variables]
@@ -70,6 +75,3 @@ class VariableObject(CoreObjectInterface):
         elif command == "EXEC":
             return self._set(name, self._execute_from_executor(args))
         return None
-
-    def _return(self, name: str):
-        return self._get(name)
