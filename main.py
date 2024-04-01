@@ -1,6 +1,6 @@
-from src import Language
-from src.executor import JumperExecutor
-import src.core as core
+from lineup_lang import Language
+from lineup_lang.executor import JumperExecutor
+import lineup_lang.core as core
 
 
 class MyLanguage(Language):
