@@ -32,7 +32,7 @@ class VariableObject(CoreObjectInterface):
                             if key not in self.default_variables]
         for key in variables_delete:
             if type(self.variables[key]) is LanguageObjectInterface:
-                self.variables[key].reset()
+                self.variables[key].close()
             del self.variables[key]
         for key in self.variables.keys():
             if type(self.variables[key]) is LanguageObjectInterface:
