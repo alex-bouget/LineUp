@@ -41,15 +41,18 @@ class VariableObject(CoreObjectInterface):
     def _get(self, name: str):
         if name in self.variables:
             return self.variables[name]
-        raise VariableNotExistError(f"'{name}' not exist in '{self}'")
+        msg = f"'{name}' not exist in '{self}'"
+        self.logger.error(msg)
+        raise VariableNotExistError(msg)
 
     def _set(self, name: str, value):
         self.variables[name] = value
 
     def _delete(self, name: str):
         if name in self.default_variables:
-            raise DeleteDefaultVariableError(
-                f"'{name}' is default variable in '{self}'")
+            msg = f"'{name}' is default variable in '{self}'"
+            self.logger.error(msg)
+            raise DeleteDefaultVariableError(msg)
         if name in self.variables:
             del self.variables[name]
 

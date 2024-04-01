@@ -1,15 +1,25 @@
 from typing import List, Any
-from .language_object import LanguageInterface, LanguageExecutorInterface
+from .language_object import LanguageInterface, LanguageExecutorInterface, \
+     LanguageObjectInterface
 from .error import ArgumentNotExistError, DecodeLineStringError, LineupError
+from .logger import start_logging
+import lineup_lang.executor as luexec
+import lineup_lang.core as lucore
 import regex as re
+import logging
+
+__all__ = ["Language", "LanguageObjectInterface", "luexec", "lucore"]
 
 
 class Language(LanguageInterface):
     _executor: LanguageExecutorInterface
     no_error: bool
+    logger = logging.getLogger("lineup_lang")
 
     def __init__(self, executor: LanguageExecutorInterface,
-                 no_error: bool = True) -> None:
+                 no_error: bool = True, log_level: str = "WARN"):
+        start_logging(log_level)
+        logger = logging.getLogger("lineup_lang")
         self._executor = executor
         self.no_error = no_error
 
@@ -69,6 +79,7 @@ class Language(LanguageInterface):
         self._executor.close()
 
     def execute_script(self, script: str) -> Any:
+        self.logger.debug(f"Execute script:\n{script}")
         script_lines = []
         for line in script.split("\n"):
             line = self._get_line(line)

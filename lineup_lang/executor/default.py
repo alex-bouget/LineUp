@@ -3,12 +3,15 @@ from ..language_object import LanguageExecutorInterface, \
 from ..error import ExecutorFunctionAlreadyExistError, \
     ExecutorFunctionNotExistError
 from typing import Any, List
+import logging
 
 
 class DefaultExecutor(LanguageExecutorInterface):
     stop = False
+    logger = None
 
     def __init__(self, core_object: List[CoreObjectInterface]):
+        self.logger = logging.getLogger("lineup_lang")
         self._core_function = {}
         self._core = []
         for core in core_object:
@@ -29,8 +32,10 @@ class DefaultExecutor(LanguageExecutorInterface):
 
     def execute_line(self, line: List[str]):
         if line[0] not in self._core_function:
-            raise ExecutorFunctionNotExistError(
-                f"'{line[0]}' not exist in '{self}'")
+            msg = f"'{line[0]}' not exist in '{self}'"
+            self.logger.error(msg)
+            raise ExecutorFunctionNotExistError(msg)
+        self.logger.debug(f"Execute: {line}")
         return self._core_function[line[0]].execute(line[0], *line[1:])
 
     def execute(self, script: List[List[str]]) -> Any:
