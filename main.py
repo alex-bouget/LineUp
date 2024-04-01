@@ -4,20 +4,21 @@ import lineup_lang.core as core
 
 
 class MyLanguage(Language):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         _core = []
         _core.append(core.VariableObject({"a": "Hello, World!"}))
         executor = JumperExecutor(_core)
-        super().__init__(executor)
+        super().__init__(executor, *args, **kwargs)
 
 
-language = MyLanguage()
-result = language.execute_script("VAR a GET")
+language = MyLanguage(True)
+result = language.execute_script(
+    """
+    VAR c COPY a
+    """)
 print(result)
-result = language.execute_script("""
-VAR c SET "Hello, World!"
-JUMP 2
-VAR b SET "Hello, Worls!"
-VAR b GET
-""")
+result = language.execute_script(
+    """
+    VAR c GET
+    """)
 print(result)

@@ -23,6 +23,11 @@ class DefaultExecutor(LanguageExecutorInterface):
                         f"'{fn}' from '{c1}' in '{c2}'")
                 self._core_function[function_name] = core
 
+    def reset(self) -> None:
+        self.stop = False
+        for core in self._core:
+            core.reset()
+
     def execute_line(self, line: List[str]):
         if line[0] not in self._core_function:
             raise ExecutorFunctionNotExistError(

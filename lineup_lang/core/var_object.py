@@ -22,6 +22,17 @@ class VariableObject(CoreObjectInterface):
             "VAR": self._variable,
         }
 
+    def reset(self):
+        variables_delete = [key for key in self.variables.keys()
+                            if key not in self.default_variables]
+        for key in variables_delete:
+            if type(self.variables[key]) is LanguageObjectInterface:
+                self.variables[key].reset()
+            del self.variables[key]
+        for key in self.variables.keys():
+            if type(self.variables[key]) is LanguageObjectInterface:
+                self.variables[key].reset()
+
     def _get(self, name: str):
         if name in self.variables:
             return self.variables[name]
