@@ -1,14 +1,17 @@
 from typing import List, Any
 from .language_object import LanguageInterface, LanguageExecutorInterface
-from .error import ArgumentNotExistError, DecodeLineStringError
+from .error import ArgumentNotExistError, DecodeLineStringError, LineupError
 import regex as re
 
 
 class Language(LanguageInterface):
     _executor: LanguageExecutorInterface
+    no_error: bool
 
-    def __init__(self, executor: LanguageExecutorInterface) -> None:
+    def __init__(self, executor: LanguageExecutorInterface,
+                 no_error: bool = True) -> None:
         self._executor = executor
+        self.no_error = no_error
 
     def _resolve_line(self, line: str):
         lines = line.split(" ")
@@ -68,7 +71,14 @@ class Language(LanguageInterface):
             line = self._get_line(line)
             if line:
                 script_lines.append(line)
-        return self._executor.execute(script_lines)
+        try:
+            result = self._executor.execute(script_lines)
+        except LineupError as e:
+            if self.no_error:
+                return e
+            raise e
+        self._executor.reset()
+        return result
 
     def execute_script_with_args(self, script: str, **kwargs) -> Any:
         script = self._resolve_args(script, **kwargs)
