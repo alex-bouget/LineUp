@@ -9,7 +9,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/alex-bouget/Lineup",
     author="alex-bouget",
-    py_modules=["lineup"],
+    packages=["lineup-lang", "lineup-lang.core", "lineup-lang.executor"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
