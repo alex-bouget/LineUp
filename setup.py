@@ -3,15 +3,16 @@ from pathlib import Path
 
 setup(
     name="lineup-lang",
-    version="0.1.2",
+    version="0.1.3",
     description="Pseudo language interpreter for Python",
     long_description=Path(__file__).parent.joinpath("README.md").read_text(),
     long_description_content_type="text/markdown",
     url="https://github.com/alex-bouget/Lineup",
     author="alex-bouget",
     packages=["lineup_lang", "lineup_lang.core", "lineup_lang.executor"],
-    install_requires=Path(__file__).parent.joinpath(
-        "requirements.txt").read_text().splitlines(),
+    install_requires=[
+        "regex",
+    ],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
