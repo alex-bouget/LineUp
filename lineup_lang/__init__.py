@@ -19,7 +19,6 @@ class Language(LanguageInterface):
     def __init__(self, executor: LanguageExecutorInterface,
                  no_error: bool = True, log_level: str = "WARN"):
         start_logging(log_level)
-        logger = logging.getLogger("lineup_lang")
         self._executor = executor
         self.no_error = no_error
 

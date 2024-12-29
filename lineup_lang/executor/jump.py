@@ -9,7 +9,9 @@ class JumperExecutor(DefaultExecutor):
 
     def jump(self, line: int):
         self.line = line
-        self.line -= 1
+        self.logger.debug(
+            f"Jump to: {self.line} (execute index {self.line + 1} or line " +
+            f"{self.line + 2})")
 
     def execute_jump(self, line: List[str]):
         if line[0] == "JUMP":
@@ -17,7 +19,7 @@ class JumperExecutor(DefaultExecutor):
                 if line[2] == "FROM":
                     self.jump(self.line + int(line[1]))
             else:
-                self.jump(int(line[1]))
+                self.jump(int(line[1]) - 2)
             return None
         raise ExecutorFunctionNotExistError(
             f"'{line[0]}' not exist in '{self}'")
@@ -28,9 +30,12 @@ class JumperExecutor(DefaultExecutor):
         return super().execute_line(line)
 
     def execute(self, script: List[List[str]]) -> Any:
+        self.stop = False
         result = None
-        self.line = 0
-        while self.line < len(script):
-            result = self.execute_line(script[self.line])
+        self.line = -1
+        while self.line < len(script) - 1:
+            if self.stop:
+                break
             self.line += 1
+            result = self.execute_line(script[self.line])
         return result

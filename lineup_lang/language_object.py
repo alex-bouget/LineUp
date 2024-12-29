@@ -4,13 +4,22 @@ import logging
 
 
 class LanguageObjectInterface:
+    """
+    LineUp Object with functions who can be executed by the language
+    """
     functions: Dict[str, Callable[..., Any]]
     logger = logging.getLogger("lineup_lang")
 
     def get_all_functions(self) -> List[str]:
+        """
+        Get all functions name in the object
+        """
         return list(self.functions.keys())
 
     def execute(self, function_name: str, *args) -> Any:
+        """
+        Execute a function in the object
+        """
         if function_name not in self.functions:
             msg = f"'{function_name}' not exist in '{self}'"
             self.logger.error(msg)
@@ -18,9 +27,15 @@ class LanguageObjectInterface:
         return self.functions[function_name](*args)
 
     def close(self):
+        """
+        Destroy the object
+        """
         pass
 
     def reset(self):
+        """
+        Reset the object for future new exectution
+        """
         pass
 
     def __str__(self) -> str:
@@ -28,6 +43,11 @@ class LanguageObjectInterface:
 
 
 class CoreObjectInterface(LanguageObjectInterface):
+    """
+    Object instancied before the creation of the language executor
+
+    Function in this object is directly accessible by the language executor
+    """
     executor: Any
 
     def set_executor(self, executor: Any) -> None:
@@ -38,6 +58,12 @@ class CoreObjectInterface(LanguageObjectInterface):
 
 
 class LanguageExecutorInterface:
+    """
+    Language executor interface
+
+    This object is the main object who execute the script
+    It execute line each by each
+    """
     _core_function: Dict[str, LanguageObjectInterface]
     _core: List[LanguageObjectInterface]
 
@@ -62,6 +88,11 @@ class LanguageExecutorInterface:
 
 
 class LanguageInterface:
+    """"
+    Language interface
+    It read the script, cut it in line and
+    execute it with the language executor
+    """
     def close(self):
         pass
 

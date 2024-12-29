@@ -19,7 +19,10 @@ class VariableObject(CoreObjectInterface):
         self.variables = variables
         self.default_variables = list(variables.keys())
         self.functions = {
+            "EXIT": self._exit,
             "VAR": self._variable,
+            "EXEC": self._execute_in_variables,
+            "GET": self._get,
         }
 
     def close(self):
@@ -64,9 +67,13 @@ class VariableObject(CoreObjectInterface):
     def _execute_from_executor(self, line: List[str]):
         return self.executor.execute_line(line)
 
+    def _exit(self, *args):
+        self.executor.stop = True
+        return self._execute_from_executor(args)
+
     def _variable(self, name: str, command: str, *args):
         if command == "USE":
-            self._set(name, self._execute_in_variables(args[0], args[1], *args[2:]))
+            self._set(name, self._execute_in_variables(args[0], *args))
         elif command == "COPY":
             self._set(name, self._get(args[0]))
         elif command == "UNSET":
