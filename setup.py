@@ -3,7 +3,7 @@ from pathlib import Path
 
 setup(
     name="lineup-lang",
-    version=Path(__file__).parent.joinpath("lineup_lang/VERSION").read_text().strip(),
+    version=Path(__file__).parent.joinpath("lineup_lang/VERSION").read_text(),
     description="Pseudo language interpreter for Python",
     long_description=Path(__file__).parent.joinpath("README.md").read_text(),
     long_description_content_type="text/markdown",
