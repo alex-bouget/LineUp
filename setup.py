@@ -1,6 +1,7 @@
 from setuptools import setup
 from pathlib import Path
 
+
 setup(
     name="lineup-lang",
     version=Path(__file__).parent.joinpath("lineup_lang/VERSION").read_text(),
@@ -10,6 +11,7 @@ setup(
     url="https://github.com/alex-bouget/Lineup",
     author="alex-bouget",
     packages=["lineup_lang", "lineup_lang.core", "lineup_lang.executor"],
+    package_data={"lineup_lang": ["VERSION"]},
     install_requires=[
         "regex",
     ],
