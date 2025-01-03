@@ -6,6 +6,8 @@ from typing import Any, List
 class JumperExecutor(DefaultExecutor):
     jump_functions = ["JUMP"]
     line = 0
+    # Executor version - it's set on the lineup version
+    _version = None
 
     def jump(self, line: int):
         self.line = line

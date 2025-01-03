@@ -5,6 +5,7 @@ from typing import List, Tuple
 
 class ConditionsJumpObject(CoreObjectInterface):
     last_result = None
+    version = None
 
     def __init__(self):
         self.functions = {

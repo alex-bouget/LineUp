@@ -51,3 +51,6 @@ result = language.execute_script(
     EXIT VAR b GET
     """
 )
+print(result)
+
+print(language.get_versions())

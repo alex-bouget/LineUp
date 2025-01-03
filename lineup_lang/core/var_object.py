@@ -14,6 +14,7 @@ class DeleteDefaultVariableError(LineupError):
 class VariableObject(CoreObjectInterface):
     variables: Dict[str, Any]
     default_variables: List[str]
+    version = None
 
     def __init__(self, variables: Dict[str, Any] = {}) -> None:
         self.variables = variables

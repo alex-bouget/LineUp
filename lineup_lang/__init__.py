@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Dict
 from .language_object import LanguageInterface, LanguageExecutorInterface, \
      LanguageObjectInterface
 from .error import ArgumentNotExistError, DecodeLineStringError, LineupError
@@ -7,6 +7,7 @@ import lineup_lang.executor as luexec
 import lineup_lang.core as lucore
 import regex as re
 import logging
+import os
 
 __all__ = ["Language", "LanguageObjectInterface", "luexec", "lucore"]
 
@@ -21,6 +22,9 @@ class Language(LanguageInterface):
         start_logging(log_level)
         self._executor = executor
         self.no_error = no_error
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
 
     def _resolve_line(self, line: str):
         lines = line.split(" ")
@@ -76,6 +80,21 @@ class Language(LanguageInterface):
 
     def close(self):
         self._executor.close()
+
+    def get_all_functions(self) -> List[str]:
+        return self._executor.get_all_functions()
+    
+    def get_versions(self) -> Dict[str, str]:
+        file_version = os.path.join(os.path.dirname(__file__), "VERSION")
+        lup_version = "0.0.0"
+        with open(file_version, "r") as file:
+            lup_version = file.read().strip()
+        all_versions = self._executor.get_versions()
+        all_versions["lineup_lang"] = lup_version
+        for [name, version] in all_versions.items():
+            if version is None:
+                all_versions[name] = lup_version
+        return all_versions
 
     def execute_script(self, script: str) -> Any:
         self.logger.debug(f"Execute script:\n{script}")

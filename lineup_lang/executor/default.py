@@ -9,6 +9,8 @@ import logging
 class DefaultExecutor(LanguageExecutorInterface):
     stop = False
     logger = None
+    # Executor version - it's set on the lineup version
+    _version = None
 
     def __init__(self, core_object: List[CoreObjectInterface]):
         self.logger = logging.getLogger("lineup_lang")

@@ -49,9 +49,13 @@ class CoreObjectInterface(LanguageObjectInterface):
     Function in this object is directly accessible by the language executor
     """
     executor: Any
+    version: str = "0.0.0"
 
     def set_executor(self, executor: Any) -> None:
         self.executor = executor
+
+    def get_version(self) -> str:
+        return self.version
 
     def __str__(self) -> str:
         return f"<LUPC:{self.__class__.__name__}>"
@@ -66,12 +70,19 @@ class LanguageExecutorInterface:
     """
     _core_function: Dict[str, LanguageObjectInterface]
     _core: List[LanguageObjectInterface]
+    _version: str = "0.0.0"
 
     def execute_line(self, line: List[str]):
         pass
 
     def execute(self, script: List[List[str]]) -> Any:
         pass
+
+    def get_versions(self) -> Dict[str, str]:
+        versions = {self.__str__(): self._version}
+        for core in self._core:
+            versions[core.__str__()] = core.get_version()
+        return versions
 
     def close(self) -> None:
         for core in self._core:
@@ -94,6 +105,12 @@ class LanguageInterface:
     execute it with the language executor
     """
     def close(self):
+        pass
+
+    def get_all_functions(self) -> List[str]:
+        pass
+
+    def get_versions(self) -> str:
         pass
 
     def execute_script(self, script: str) -> Any:
