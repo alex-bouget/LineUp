@@ -73,7 +73,7 @@ class VariableObject(CoreObjectInterface):
 
     def _variable(self, name: str, command: str, *args):
         if command == "USE":
-            self._set(name, self._execute_in_variables(args[0], *args))
+            self._set(name, self._execute_in_variables(args[0], *args[1:]))
         elif command == "COPY":
             self._set(name, self._get(args[0]))
         elif command == "UNSET":
