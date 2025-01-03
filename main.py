@@ -42,3 +42,12 @@ result = language.execute_script(
     """
 )
 print(result)
+result = language.execute_script(
+    """
+    VAR c COPY a
+    IF 1 FROM EQUAL a c
+    ELSE 1 FROM
+    EXIT VAR a GET
+    EXIT VAR b GET
+    """
+)

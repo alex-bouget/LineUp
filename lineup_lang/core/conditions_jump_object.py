@@ -11,6 +11,7 @@ class ConditionsJumpObject(CoreObjectInterface):
             "IF": self._if,
             "NOTIF": self._notif,
             "ELSE": self._else,
+            "EQUAL": self._equal,
         }
 
     def _get_two_command(self, jump_size: str, from_or_first_arg: str,
@@ -56,3 +57,12 @@ class ConditionsJumpObject(CoreObjectInterface):
             raise LineupError("ELSE without IF")
         self.last_result = False
         self.executor.execute_line(["JUMP", *args])
+
+    def _equal(self, *args):
+        first = self.executor.execute_line(["VAR", args[0], "GET"])
+        second = self.executor.execute_line(["VAR", args[1], "GET"])
+        if first == second:
+            self.last_result = True
+        else:
+            self.last_result = False
+        return self.last_result
