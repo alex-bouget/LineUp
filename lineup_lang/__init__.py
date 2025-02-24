@@ -13,6 +13,8 @@ __all__ = ["Language", "LanguageObjectInterface", "luexec", "lucore"]
 
 
 class Language(LanguageInterface):
+    """Language object"""
+
     _executor: LanguageExecutorInterface
     no_error: bool
     logger = logging.getLogger("lineup_lang")
@@ -26,7 +28,11 @@ class Language(LanguageInterface):
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
+    def __del__(self):
+        self.close()
+
     def _resolve_line(self, line: str):
+        """Transform a line string to a line object"""
         lines = line.split(" ")
         result = []
         tmp = ""
@@ -55,6 +61,7 @@ class Language(LanguageInterface):
         return result
 
     def _get_line(self, line: str) -> List[str] | None:
+        """Get a line object from a line string"""
         line = line.strip()
         if not line:
             return None
@@ -63,6 +70,7 @@ class Language(LanguageInterface):
         return self._resolve_line(line)
 
     def _resolve_args(self, script: str, **kwargs):
+        """Resolve the arguments in the script"""
         regex = r"\$(\((\w+):(.+?)\)|(\w+))"
         matches = re.finditer(regex, script)
         for match in matches:
@@ -83,7 +91,7 @@ class Language(LanguageInterface):
 
     def get_all_functions(self) -> List[str]:
         return self._executor.get_all_functions()
-    
+
     def get_versions(self) -> Dict[str, str]:
         file_version = os.path.join(os.path.dirname(__file__), "VERSION")
         lup_version = "0.0.0"

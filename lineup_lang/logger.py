@@ -3,8 +3,12 @@ import logging
 
 def start_logging(log_level: str = "WARN") -> None:
     """
-    Start logger for lineup_lang
+    Add handlers to the logger if not exist
+
+    :param log_level: Log level
     """
+    if logging.getLogger("lineup_lang").hasHandlers():
+        return
     logger = logging.getLogger("lineup_lang")
     logger.setLevel(log_level)
     formatter = logging.Formatter(
