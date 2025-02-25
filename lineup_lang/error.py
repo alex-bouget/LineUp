@@ -26,3 +26,10 @@ class ArgumentNotExistError(LineupError):
 class DecodeLineStringError(LineupError):
     """An error occur when decoding a line"""
     pass
+
+
+class UnexpectedError(LineupError):
+    """An unexpected error occur, who are not managed by the language"""
+
+    def __init__(self, error: Exception):
+        super().__init__(f"An unexpected error occur: {error.__class__.__name__}: {error}")
