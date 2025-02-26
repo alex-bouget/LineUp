@@ -38,7 +38,7 @@ class VariableObject(CoreObjectInterface):
             if isinstance(self.variables[key], LanguageObjectInterface):
                 self.logger.debug(f"{self} close {key}")
                 self.variables[key].close()
-            del self.variables[key]
+            self.variables.pop(key)
         for key in self.variables.keys():
             if isinstance(self.variables[key], LanguageObjectInterface):
                 self.logger.debug(f"{self} reset {key}")

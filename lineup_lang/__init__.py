@@ -19,6 +19,7 @@ class Language(LanguageInterface):
     _executor: LanguageExecutorInterface
     no_error: bool
     logger = logging.getLogger("lineup_lang")
+    is_closed = False
 
     def __init__(self, executor: LanguageExecutorInterface,
                  no_error: bool = True, log_level: str = "WARN"):
@@ -34,6 +35,10 @@ class Language(LanguageInterface):
         self.close()
 
     def close(self):
+        if self.is_closed:
+            return
+        self.is_closed = True
+        self.logger.info(f"Close: {self}")
         self._executor.close()
 
     def get_all_functions(self) -> List[str]:
@@ -62,6 +67,8 @@ class Language(LanguageInterface):
                 continue
             script_lines.append(line)
         try:
+            if self.is_closed:
+                raise LineupError("Language is closed")
             result = self._executor.execute(script_lines)
         except Exception as e:
             if self.no_error:
