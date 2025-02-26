@@ -28,18 +28,20 @@ class VariableObject(CoreObjectInterface):
 
     def close(self):
         for key in self.variables.keys():
-            if type(self.variables[key]) is LanguageObjectInterface:
+            if isinstance(self.variables[key], LanguageObjectInterface):
                 self.variables[key].close()
 
     def reset(self):
         variables_delete = [key for key in self.variables.keys()
                             if key not in self.default_variables]
         for key in variables_delete:
-            if type(self.variables[key]) is LanguageObjectInterface:
+            if isinstance(self.variables[key], LanguageObjectInterface):
+                self.logger.debug(f"{self} close {key}")
                 self.variables[key].close()
             del self.variables[key]
         for key in self.variables.keys():
-            if type(self.variables[key]) is LanguageObjectInterface:
+            if isinstance(self.variables[key], LanguageObjectInterface):
+                self.logger.debug(f"{self} reset {key}")
                 self.variables[key].reset()
 
     def _get(self, name: str):
