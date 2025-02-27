@@ -27,9 +27,11 @@ class VariableObject(CoreObjectInterface):
         }
 
     def close(self):
+        super().close()
         for key in self.variables.keys():
             if isinstance(self.variables[key], LanguageObjectInterface):
                 self.variables[key].close()
+            self.variables.pop(key)
 
     def reset(self):
         variables_delete = [key for key in self.variables.keys()

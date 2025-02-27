@@ -1,9 +1,36 @@
+from __future__ import annotations
 from typing import Dict, Any, Callable, List
-from .error import FunctionNotExistError
+from .error import FunctionNotExistError, AlreadyClosedError
 import logging
 
 
-class LanguageObjectInterface:
+class LineupObjectInterface:
+    """
+    LineUp Object, who can be used by the language
+    Can be close or reset
+    """
+
+    _is_closed = False
+    """
+    If the object is closed
+    If it's closed, the object can't be used anymore
+    """
+
+    def close(self):
+        """
+        Destroy the object
+        """
+        self._is_closed = True
+
+    def reset(self):
+        """
+        Reset the object for future new exectution
+        """
+        if self._is_closed:
+            raise AlreadyClosedError(f"{self} is already closed")
+
+
+class LanguageObjectInterface(LineupObjectInterface):
     """
     LineUp Object with functions who can be executed by the language
     """
@@ -19,29 +46,21 @@ class LanguageObjectInterface:
         """
         Get all functions name in the object
         """
+        if self._is_closed:
+            raise AlreadyClosedError(f"{self} is already closed")
         return list(self.functions.keys())
 
     def execute(self, function_name: str, *args) -> Any:
         """
         Execute a function in the object
         """
+        if self._is_closed:
+            raise AlreadyClosedError(f"{self} is already closed")
         if function_name not in self.functions:
             msg = f"'{function_name}' not exist in '{self}'"
             self.logger.error(msg)
             raise FunctionNotExistError(msg)
         return self.functions[function_name](*args)
-
-    def close(self):
-        """
-        Destroy the object
-        """
-        pass
-
-    def reset(self):
-        """
-        Reset the object for future new exectution
-        """
-        pass
 
     def __str__(self) -> str:
         return f"<LUPO:{self.__class__.__name__}>"
@@ -58,7 +77,9 @@ class CoreObjectInterface(LanguageObjectInterface):
     executor: Any
     version: str = "0.0.0"
 
-    def set_executor(self, executor: Any) -> None:
+    def set_executor(self, executor: LanguageExecutorInterface) -> None:
+        if self._is_closed:
+            raise AlreadyClosedError(f"{self} is already closed")
         self.executor = executor
 
     def get_version(self) -> str:
@@ -68,7 +89,7 @@ class CoreObjectInterface(LanguageObjectInterface):
         return f"<LUPC:{self.__class__.__name__}>"
 
 
-class LanguageExecutorInterface:
+class LanguageExecutorInterface(LineupObjectInterface):
     """
     Language executor interface
 
@@ -78,24 +99,29 @@ class LanguageExecutorInterface:
     _core_function: Dict[str, LanguageObjectInterface]
     _core: List[LanguageObjectInterface]
     _version: str = "0.0.0"
+    stopped: bool = False
 
     def execute_line(self, line: List[str]):
         """
         Execute one line of the script
         """
-        pass
+        if self._is_closed:
+            raise AlreadyClosedError(f"{self} is already closed")
 
     def execute(self, script: List[List[str]]) -> Any:
         """
         Execute a list of line
         """
-        pass
+        if self._is_closed:
+            raise AlreadyClosedError(f"{self} is already closed")
 
     def get_versions(self) -> Dict[str, str]:
         """
         Get all the versions who defined the language
         (executor and core object)
         """
+        if self._is_closed:
+            raise AlreadyClosedError(f"{self} is already closed")
         versions = {self.__str__(): self._version}
         for core in self._core:
             versions[core.__str__()] = core.get_version()
@@ -107,6 +133,9 @@ class LanguageExecutorInterface:
 
         This function is called when the executor is not used anymore
         """
+        if self._is_closed:
+            return
+        super().close()
         for core in self._core:
             logging.getLogger("lineup_lang").info(f"Close: {core}")
             core.close()
@@ -117,6 +146,8 @@ class LanguageExecutorInterface:
 
         This function is called when after a script execution
         """
+        if self._is_closed:
+            raise AlreadyClosedError(f"{self} is already closed")
         for core in self._core:
             logging.getLogger("lineup_lang").info(f"Reset: {core}")
             core.reset()
@@ -125,20 +156,12 @@ class LanguageExecutorInterface:
         return f"<LUPE:{self.__class__.__name__}>"
 
 
-class LanguageInterface:
+class LanguageInterface(LineupObjectInterface):
     """"
     Language interface
     It read the script, cut it in line and
     send it to the executor for execute it
     """
-
-    def close(self):
-        """
-        Close the language
-
-        This function is called when the language is not used anymore
-        """
-        pass
 
     def get_all_functions(self) -> List[str]:
         """

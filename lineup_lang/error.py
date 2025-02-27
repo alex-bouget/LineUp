@@ -28,6 +28,11 @@ class DecodeLineStringError(LineupError):
     pass
 
 
+class AlreadyClosedError(LineupError):
+    """An object is already closed"""
+    pass
+
+
 class UnexpectedError(LineupError):
     """An unexpected error occur, who are not managed by the language"""
 

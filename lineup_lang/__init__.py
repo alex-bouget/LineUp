@@ -1,6 +1,6 @@
 from typing import List, Any, Dict
 from .language_object import LanguageInterface, LanguageExecutorInterface, \
-     LanguageObjectInterface
+     LanguageObjectInterface, CoreObjectInterface
 from .error import LineupError, UnexpectedError
 from .logger import start_logging
 from .line_decoder import LineDecoder
@@ -10,7 +10,7 @@ import lineup_lang.core as lucore
 import logging
 import os
 
-__all__ = ["Language", "LanguageObjectInterface", "luexec", "lucore"]
+__all__ = ["Language", "LanguageObjectInterface", "CoreObjectInterface", "luexec", "lucore"]
 
 
 class Language(LanguageInterface):

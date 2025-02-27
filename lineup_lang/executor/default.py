@@ -7,7 +7,6 @@ import logging
 
 
 class DefaultExecutor(LanguageExecutorInterface):
-    stop = False
     logger = None
     # Executor version - it's set on the lineup version
     _version = None
@@ -29,10 +28,11 @@ class DefaultExecutor(LanguageExecutorInterface):
                 self._core_function[function_name] = core
 
     def reset(self) -> None:
-        self.stop = False
+        self.stopped = False
         super().reset()
 
     def execute_line(self, line: List[str]):
+        super().execute_line(line)
         if line[0] not in self._core_function:
             msg = f"'{line[0]}' not exist in '{self}'"
             self.logger.error(msg)
@@ -41,7 +41,8 @@ class DefaultExecutor(LanguageExecutorInterface):
         return self._core_function[line[0]].execute(line[0], *line[1:])
 
     def execute(self, script: List[List[str]]) -> Any:
-        self.stop = False
+        super().execute(script)
+        self.stopped = False
         result = None
         for line in script:
             result = self.execute_line(line)
