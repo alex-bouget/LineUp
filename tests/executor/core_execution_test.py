@@ -6,7 +6,7 @@ from lineup_lang.error import ExecutorFunctionNotExistError
 from lineup_lang import CoreObjectInterface, LanguageExecutorInterface
 
 
-class CoreObjectMock(CoreObjectInterface):
+class CoreObjectFunctionMock(CoreObjectInterface):
     func_called: List[str] = []
 
     def __init__(self):
@@ -28,7 +28,7 @@ class CoreObjectMock(CoreObjectInterface):
 class CoreExecutionTest(unittest.TestCase):
     @data(luexec.DefaultExecutor, luexec.JumperExecutor)
     def test_executor(self, executor):
-        obj = CoreObjectMock()
+        obj = CoreObjectFunctionMock()
         obj.func_called = []
         executor: LanguageExecutorInterface = executor([obj])
         self.assertEqual(executor.execute_line(["FUNC1"]), "FUNC1")
@@ -43,7 +43,7 @@ class CoreExecutionTest(unittest.TestCase):
 
     @data(luexec.DefaultExecutor, luexec.JumperExecutor)
     def text_execute_all_function(self, executor):
-        obj = CoreObjectMock()
+        obj = CoreObjectFunctionMock()
         obj.func_called = []
         executor: LanguageExecutorInterface = executor([obj])
         self.assertEqual(executor.execute([["FUNC1"], ["FUNC2"]]), None)
