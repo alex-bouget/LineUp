@@ -46,6 +46,6 @@ class DefaultExecutor(LanguageExecutorInterface):
         result = None
         for line in script:
             result = self.execute_line(line)
-            if self.stop:
+            if self.stopped:
                 break
         return result

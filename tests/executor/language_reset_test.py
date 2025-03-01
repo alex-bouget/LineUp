@@ -1,6 +1,7 @@
 import unittest
 from ddt import ddt, data
 from lineup_lang import Language, CoreObjectInterface, luexec
+from lineup_lang.error import AlreadyClosedError
 
 
 class CoreObjectResetMock(CoreObjectInterface):
@@ -33,3 +34,12 @@ class LanguageResetTest(unittest.TestCase):
         result = lang.execute_script("FUNC1")
         self.assertEqual(obj.nb_reset, 1)
         self.assertEqual(result, 0)
+
+    @data(luexec.DefaultExecutor, luexec.JumperExecutor)
+    def test_reset_after_close(self, executor):
+        obj = CoreObjectResetMock()
+        lang = Language(executor([obj]))
+        lang.close()
+        with self.assertRaises(AlreadyClosedError):
+            lang.reset()
+        self.assertEqual(obj.nb_reset, 0)

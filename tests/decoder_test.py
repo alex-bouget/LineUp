@@ -29,7 +29,6 @@ class DecoderTest(unittest.TestCase):
         self.assertEqual(line.decode('    #'), None)
         self.assertEqual(line.decode('    # '), None)
         self.assertEqual(line.decode('$"a"'), ["$", "a"])
-        self.assertEqual(line.decode('$"a'), ["$", "a"])
 
     def test_escaped(self):
         line = LineDecoder()

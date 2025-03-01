@@ -28,6 +28,9 @@ class Language(LanguageInterface):
         self.no_error = no_error
         self.logger.info(f"Start: {self} with executor: {executor}")
 
+    def __enter__(self):
+        return self
+
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
@@ -40,6 +43,10 @@ class Language(LanguageInterface):
         self.is_closed = True
         self.logger.info(f"Close: {self}")
         self._executor.close()
+
+    def reset(self):
+        super().reset()
+        self._executor.reset()
 
     def get_all_functions(self) -> List[str]:
         return self._executor.get_all_functions()

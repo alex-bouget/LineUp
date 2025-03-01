@@ -20,19 +20,26 @@ class LineDecoder:
         if first_comment_block:
             line = line[:first_comment_block.start()]
         line = line.replace("\\#", "#")  # replace escaped comments
-        return self._split_line(line)
+        line_splitted = self._split_line(line)
+        if not line_splitted:
+            return None
+        return line_splitted
 
     def _split_line(self, line: str) -> List[str]:
         lines = self.format_quotes(line)
         result = []
+        if len(lines) % 2 == 0:
+            raise DecodeLineStringError(f"'{line}' is not valid line string")
         # odd is inside quotes, even is outside
         for i, line in enumerate(lines):
             if i % 2 == 1:
                 # inside quotes, the line has to be kept as is
                 result.append(line)
-            elif line.strip() != "":
+            else:
                 # outside quotes, split by space for get the instructions
-                result.extend(line.strip().split(" "))
+                result.extend([
+                    x for x in line.split(" ") if x.strip() != ""
+                ])
         return result
 
     def format_quotes(self, line: str) -> List[str]:
@@ -48,7 +55,10 @@ class LineDecoder:
         for i in lines:
             current_line += i
             if i.endswith("\\"):
-                current_line += '"'
+                # delete the backslash and add the quote
+                current_line = bytearray(current_line, "utf-8")
+                current_line[-1] = ord('"')
+                current_line = current_line.decode("utf-8")
             else:
                 result.append(current_line)
                 current_line = ""
