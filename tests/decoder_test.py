@@ -18,6 +18,8 @@ class DecoderTest(unittest.TestCase):
       - If a token is quoted, but sticked to the next token, it's considered like a space between them.
       - If a token is quoted, but sticked to the previous token, it's considered like a space between them.
 
+      - TODO A token quoted is a JSON string.
+
       - If a hashtag is found, ignore the rest of the line.
       - An hashtag can be escaped with a backslash.
       - A quote can be escaped with a backslash.
