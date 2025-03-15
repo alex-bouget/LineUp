@@ -103,6 +103,7 @@ class DecoderTest(unittest.TestCase):
         self.assertIsNone(line.decode('    #'))
         self.assertIsNone(line.decode('    # '))
 
+    @timeout(2)
     def test_json_decode_quoted(self):
         line = LineDecoder()
         # A token quoted is a JSON string.

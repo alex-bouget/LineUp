@@ -45,12 +45,13 @@ class ArgsResolverTest(unittest.TestCase):
         self.assertEqual(resolver.resolve("a ${a} c $b d ${c:default} e", a='"', b="b", c="c"), """a "\\"" c "b" d "c" e""")
         self.assertEqual(resolver.resolve("a ${a} # c $b d ${c:default} e", a='#', b="b"), """a "\\#" # c "b" d "default" e""")
 
+    @timeout(2)
     def test_json_implementation(self):
         resolver = ArgsResolver()
         self.assertEqual(resolver.resolve("${a}", a="t\nb"), '"t\\nb"')
 
+    @timeout(2)
     def test_variable_error(self):
         resolver = ArgsResolver()
         with self.assertRaises(ArgumentNotExistError):
             resolver.resolve("${a}")
-
