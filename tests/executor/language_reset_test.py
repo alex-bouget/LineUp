@@ -8,9 +8,20 @@ from lineup_lang.error import AlreadyClosedError
 
 @ddt
 class LanguageResetTest(unittest.TestCase):
+    """
+    A test class for the Language reset method.
+
+    - Need to test:
+        - If the reset method is called, the executor should reset all the objects it uses.
+        - If the reset method is called multiple times, the executor should reset the objects multiple times.
+        - The reset method should be called after the execution of a script.
+        - The reset method can't be called after the close method.
+    """
     @timeout(2)
     @data(luexec.DefaultExecutor, luexec.JumperExecutor)
     def test_reset(self, executor):
+        # If the reset method is called, the executor should reset all the objects it uses.
+        # If the reset method is called multiple times, the executor should reset the objects multiple times.
         obj = CoreObjectResetMock()
         lang = Language(executor([obj]), False)
         lang.reset()
@@ -21,6 +32,7 @@ class LanguageResetTest(unittest.TestCase):
     @timeout(2)
     @data(luexec.DefaultExecutor, luexec.JumperExecutor)
     def test_reset_after_execution(self, executor):
+        # The reset method should be called after the execution of a script.
         obj = CoreObjectResetMock()
         lang = Language(executor([obj]), False)
         result = lang.execute_script("FUNC1")
@@ -30,6 +42,7 @@ class LanguageResetTest(unittest.TestCase):
     @timeout(2)
     @data(luexec.DefaultExecutor, luexec.JumperExecutor)
     def test_reset_after_close(self, executor):
+        # The reset method can't be called after the close method
         obj = CoreObjectResetMock()
         lang = Language(executor([obj]), False)
         lang.close()

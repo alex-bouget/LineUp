@@ -8,9 +8,18 @@ from lineup_lang.error import ExecutorFunctionNotExistError
 
 @ddt
 class CoreExecutionTest(unittest.TestCase):
+    """
+    A test class for the Core execution method.
+
+    - Need to test:
+        - If the executor can execute a function.
+        - If the executor can execute multiple functions.
+        - If the executor can't execute a function that does not exist.
+    """
     @timeout(2)
     @data(luexec.DefaultExecutor, luexec.JumperExecutor)
     def test_executor(self, executor):
+        # If the executor can execute a function.
         obj = CoreObjectFunctionMock()
         obj.func_called = []
         executor: LanguageExecutorInterface = executor([obj])
@@ -27,6 +36,7 @@ class CoreExecutionTest(unittest.TestCase):
     @timeout(2)
     @data(luexec.DefaultExecutor, luexec.JumperExecutor)
     def test_execute_all_function(self, executor):
+        # If the executor can execute multiple functions.
         obj = CoreObjectFunctionMock()
         obj.func_called = []
         executor: LanguageExecutorInterface = executor([obj])
@@ -34,6 +44,7 @@ class CoreExecutionTest(unittest.TestCase):
         self.assertEqual(obj.func_called, ["FUNC1", "FUNC2"])
         obj.func_called = []
 
+        # If the executor can't execute a function that does not exist.
         with self.assertRaises(ExecutorFunctionNotExistError):
             executor.execute([["FUNC1"], ["FUNC3"]])
 
