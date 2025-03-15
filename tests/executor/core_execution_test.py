@@ -1,31 +1,14 @@
 import unittest
-from typing import List
+from timeout_decorator import timeout
 from ddt import ddt, data
-from lineup_lang import luexec
+from tests.mocks import CoreObjectFunctionMock
+from lineup_lang import luexec, LanguageExecutorInterface
 from lineup_lang.error import ExecutorFunctionNotExistError
-from lineup_lang import CoreObjectInterface, LanguageExecutorInterface
-
-
-class CoreObjectFunctionMock(CoreObjectInterface):
-    func_called: List[str] = []
-
-    def __init__(self):
-        self.functions = {
-            "FUNC1": self._func1,
-            "FUNC2": self._func2,
-        }
-
-    def _func1(self, *args):
-        self.func_called.append("FUNC1")
-        return "FUNC1"
-
-    def _func2(self, *args):
-        self.func_called.append("FUNC2")
-        return None
 
 
 @ddt
 class CoreExecutionTest(unittest.TestCase):
+    @timeout(2)
     @data(luexec.DefaultExecutor, luexec.JumperExecutor)
     def test_executor(self, executor):
         obj = CoreObjectFunctionMock()
@@ -34,19 +17,20 @@ class CoreExecutionTest(unittest.TestCase):
         self.assertEqual(executor.execute_line(["FUNC1"]), "FUNC1")
         self.assertEqual(obj.func_called, ["FUNC1"])
         obj.func_called = []
-        self.assertEqual(executor.execute_line(["FUNC2"]), None)
+        self.assertIsNone(executor.execute_line(["FUNC2"]))
         self.assertEqual(obj.func_called, ["FUNC2"])
         obj.func_called = []
 
         with self.assertRaises(ExecutorFunctionNotExistError):
             executor.execute_line(["FUNC3"])
 
+    @timeout(2)
     @data(luexec.DefaultExecutor, luexec.JumperExecutor)
-    def text_execute_all_function(self, executor):
+    def test_execute_all_function(self, executor):
         obj = CoreObjectFunctionMock()
         obj.func_called = []
         executor: LanguageExecutorInterface = executor([obj])
-        self.assertEqual(executor.execute([["FUNC1"], ["FUNC2"]]), None)
+        self.assertIsNone(executor.execute([["FUNC1"], ["FUNC2"]]))
         self.assertEqual(obj.func_called, ["FUNC1", "FUNC2"])
         obj.func_called = []
 
