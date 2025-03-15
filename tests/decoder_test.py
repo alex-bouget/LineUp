@@ -18,7 +18,7 @@ class DecoderTest(unittest.TestCase):
       - If a token is quoted, but sticked to the next token, it's considered like a space between them.
       - If a token is quoted, but sticked to the previous token, it's considered like a space between them.
 
-      - TODO A token quoted is a JSON string.
+      - A token quoted is a JSON string.
 
       - If a hashtag is found, ignore the rest of the line.
       - An hashtag can be escaped with a backslash.
@@ -70,7 +70,7 @@ class DecoderTest(unittest.TestCase):
         # A quote can be escaped with a backslash.
         self.assertEqual(line.decode('1 "2 \\"3" 4'), ["1", '2 "3', "4"])
         self.assertEqual(line.decode('1 \\"3 4'), ["1", '"3', "4"])
-        self.assertEqual(line.decode('1 "\\3" 4'), ["1", '\\3', "4"])
+        self.assertEqual(line.decode('1 "\\\\3" 4'), ["1", '\\3', "4"])
         # The backslash is not used for escaping.
         self.assertEqual(line.decode('1 \\\\3 4'), ["1", "\\\\3", "4"])
 
@@ -102,3 +102,9 @@ class DecoderTest(unittest.TestCase):
         self.assertIsNone(line.decode('    '))
         self.assertIsNone(line.decode('    #'))
         self.assertIsNone(line.decode('    # '))
+
+    def test_json_decode_quoted(self):
+        line = LineDecoder()
+        # A token quoted is a JSON string.
+        self.assertEqual(line.decode('1 "a\\n\\tb" 3'), ["1", "a\n\tb", "3"])
+        self.assertEqual(line.decode('1 "a\\"" 3'), ["1", 'a"', "3"])

@@ -1,6 +1,6 @@
 import unittest
 from timeout_decorator import timeout
-from tests.mocks import LanguageObjectMock, CoreObjectMock
+from tests.mocks import LanguageObjectMock, CoreObjectMock, CoreObjectCloseMock
 from lineup_lang import Language, lucore, luexec
 
 
@@ -51,4 +51,11 @@ class VariableActionLanguageTest(unittest.TestCase):
         self.assertEqual(language.execute_script("VAR VAR3 USE GET\nVAR VAR3 GET"), 0)
         self.assertEqual(language.execute_script("BUILD 10\nVAR VAR3 USE GET\nVAR VAR3 GET"), 10)
 
-    # TODO - Test the close on language objects variables
+    @timeout(2)
+    def test_close(self):
+        obj = CoreObjectCloseMock()
+        default_variables = {"VAR1": 1, "VAR2": obj}
+        language = Language(luexec.DefaultExecutor([lucore.Variables(default_variables)]), False)
+        with self.assertRaises(Exception, "CoreObjectCloseMock, Close error"):
+            language.execute_script("VAR VAR2 SELF")
+        language.close()

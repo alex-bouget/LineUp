@@ -17,11 +17,18 @@ class FakeExitObject(CoreObjectInterface):
 
 class CoreObjectCloseMock(CoreObjectInterface):
     nb_close = 0
+    use_throw = False
 
-    functions = {}
+    functions = {"SELF": lambda: CoreObjectCloseMock(True)}
+
+    def __init__(self, use_throw=False):
+        super().__init__()
+        self.use_throw = use_throw
 
     def close(self):
         self.nb_close += 1
+        if self.use_throw:
+            raise Exception("CoreObjectCloseMock, Close error")
         return super().close()
 
 
