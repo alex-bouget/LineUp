@@ -102,6 +102,8 @@ class DecoderTest(unittest.TestCase):
         self.assertIsNone(line.decode('    '))
         self.assertIsNone(line.decode('    #'))
         self.assertIsNone(line.decode('    # '))
+        # If a backslash is used for escaping, it can be escaped with another backslash.
+        self.assertEqual(line.decode("\\\\#"), ["\\"])
 
     @timeout(2)
     def test_json_decode_quoted(self):
