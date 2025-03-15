@@ -50,3 +50,5 @@ class VariableActionLanguageTest(unittest.TestCase):
         language = Language(luexec.DefaultExecutor([lucore.Variables(default_variables), core]), False)
         self.assertEqual(language.execute_script("VAR VAR3 USE GET\nVAR VAR3 GET"), 0)
         self.assertEqual(language.execute_script("BUILD 10\nVAR VAR3 USE GET\nVAR VAR3 GET"), 10)
+
+    # TODO - Test the close on language objects variables
