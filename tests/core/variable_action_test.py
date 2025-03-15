@@ -64,5 +64,3 @@ class VariableActionTest(unittest.TestCase):
         language.execute_script("VAR VAR3 SET 3")
         with self.assertRaises(VariableNotExistError):
             language.execute_script("VAR VAR3 GET")
-
-    # TODO - Test the close on variables

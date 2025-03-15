@@ -1,6 +1,7 @@
 import unittest
 from timeout_decorator import timeout
 from lineup_lang.args_resolver import ArgsResolver
+from lineup_lang.error import ArgumentNotExistError
 
 
 class ArgsResolverTest(unittest.TestCase):
@@ -9,9 +10,9 @@ class ArgsResolverTest(unittest.TestCase):
 
     - Need to test:
         - If a variable is found, replace it with the value inside a double quote.
-        - TODO The value is JSON encoded when it's replaced.
+        - The value is JSON encoded when it's replaced.
         - If a variable not exists, replace it with the default value in the second part of the bracket.
-        - TODO If a variable not exists and no default value, throw an error.
+        - If a variable not exists and no default value, throw an error.
 
     """
     @timeout(2)
@@ -43,3 +44,14 @@ class ArgsResolverTest(unittest.TestCase):
         resolver = ArgsResolver()
         self.assertEqual(resolver.resolve("a ${a} c $b d ${c:default} e", a='"', b="b", c="c"), """a "\\"" c "b" d "c" e""")
         self.assertEqual(resolver.resolve("a ${a} # c $b d ${c:default} e", a='#', b="b"), """a "\\#" # c "b" d "default" e""")
+
+    @timeout(2)
+    def test_json_implementation(self):
+        resolver = ArgsResolver()
+        self.assertEqual(resolver.resolve("${a}", a="t\nb"), '"t\\nb"')
+
+    @timeout(2)
+    def test_variable_error(self):
+        resolver = ArgsResolver()
+        with self.assertRaises(ArgumentNotExistError):
+            resolver.resolve("${a}")
