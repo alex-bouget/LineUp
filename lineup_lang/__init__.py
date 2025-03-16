@@ -22,7 +22,7 @@ class Language(LanguageInterface):
     is_closed = False
 
     def __init__(self, executor: LanguageExecutorInterface,
-                 no_error: bool = True, log_level: str = "WARN"):
+                 no_error: bool = False, log_level: str = "WARN"):
         start_logging(log_level)
         self._executor = executor
         self.no_error = no_error
