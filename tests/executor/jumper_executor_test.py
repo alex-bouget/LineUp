@@ -1,7 +1,7 @@
 import unittest
 from timeout_decorator import timeout
 from lineup_lang import Language, luexec
-from lineup_lang.error import LineupError
+from lineup_lang.executor.jump import JumperOffsetInvalidError
 from tests.mocks import FakeExitObject
 
 
@@ -40,18 +40,18 @@ class JumpTest(unittest.TestCase):
 
     @timeout(2)
     def test_goto_zero_error(self):
-        language = Language(luexec.JumperExecutor([FakeExitObject()]))
-        with self.assertRaises(LineupError):
+        language = Language(luexec.JumperExecutor([FakeExitObject()]), False)
+        with self.assertRaises(JumperOffsetInvalidError):
             language.execute_script("GOTO 0")
 
     @timeout(2)
     def test_jump_zero_error(self):
-        language = Language(luexec.JumperExecutor([FakeExitObject()]))
-        with self.assertRaises(ValueError):
+        language = Language(luexec.JumperExecutor([FakeExitObject()]), False)
+        with self.assertRaises(JumperOffsetInvalidError):
             language.execute_script("JUMP 0")
 
     @timeout(2)
-    def test_jump_negative_error(self):
-        language = Language(luexec.JumperExecutor([FakeExitObject()]))
-        with self.assertRaises(LineupError):
-            language.execute_script("JUMP -1")
+    def test_goto_negative_error(self):
+        language = Language(luexec.JumperExecutor([FakeExitObject()]), False)
+        with self.assertRaises(JumperOffsetInvalidError):
+            language.execute_script("GOTO -1")
