@@ -1,7 +1,7 @@
 import unittest
 from timeout_decorator import timeout
 from lineup_lang import Language, lucore, luexec
-from lineup_lang.core.var_object import VariableNotExistError
+from lineup_lang.core.variables import VariableNotExistError
 
 
 class VariableActionTest(unittest.TestCase):
