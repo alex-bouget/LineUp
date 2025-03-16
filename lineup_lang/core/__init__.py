@@ -1,4 +1,4 @@
 from .variables import Variables
-from .conditions_jump_object import ConditionsJumpObject
+from .conditions import Conditions
 
-__all__ = ["Variables", "ConditionsJumpObject"]
+__all__ = ["Variables", "Conditions"]
