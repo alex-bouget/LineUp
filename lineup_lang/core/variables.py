@@ -1,6 +1,6 @@
 from ..language_object import CoreObjectInterface, LanguageObjectInterface
 from ..error import LineupError
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple
 
 
 class VariableNotExistError(LineupError):
@@ -16,7 +16,9 @@ class Variables(CoreObjectInterface):
     default_variables: List[str]
     version = None
 
-    def __init__(self, variables: Dict[str, Any] = {}) -> None:
+    def __init__(self, variables: Dict[str, Any] | None) -> None:
+        if variables is None:
+            variables = {}
         self.variables = variables
         self.default_variables = list(variables.keys())
         self.default_values = variables.copy()
@@ -32,10 +34,19 @@ class Variables(CoreObjectInterface):
             self.variables.pop(key)
 
     def reset(self):
-        variables_delete = [key for key in self.variables.keys()
-                            if key not in self.default_variables]
         error = []
-        for key in variables_delete:
+        error += self._reset_disregard()
+        error += self._reset_default()
+        if error:
+            for key, e in error:
+                self.logger.error(f"Error at close with {key}: {e}")
+            raise LineupError(f"Error with {len(error)} variables")
+
+    def _reset_disregard(self) -> List[Tuple[str, Exception]]:
+        variables_to_delete = [key for key in self.variables.keys()
+                               if key not in self.default_variables]
+        error = []
+        for key in variables_to_delete:
             if isinstance(self.variables[key], LanguageObjectInterface):
                 self.logger.debug(f"{self} close {key}")
                 try:
@@ -43,6 +54,10 @@ class Variables(CoreObjectInterface):
                 except Exception as e:
                     error.append((key, e))
             self.variables.pop(key)
+        return error
+
+    def _reset_default(self) -> List[Tuple[str, Exception]]:
+        error = []
         for key in self.variables.keys():
             if isinstance(self.variables[key], LanguageObjectInterface):
                 self.logger.debug(f"{self} reset {key}")
@@ -52,10 +67,7 @@ class Variables(CoreObjectInterface):
                     error.append((key, e))
             else:
                 self.variables[key] = self.default_values[key]
-        if error:
-            for key, e in error:
-                self.logger.error(f"Error at close with {key}: {e}")
-            raise LineupError(f"Error with {len(error)} variables")
+        return error
 
     def _get(self, name: str):
         if name in self.variables:
@@ -77,9 +89,7 @@ class Variables(CoreObjectInterface):
             raise VariableNotExistError(f"'{variables}' not exist in '{self}'")
         if not isinstance(self.variables[variables], LanguageObjectInterface):
             raise VariableNotLanguageObjectError(f"'{variables}' is not a LanguageObjectInterface in '{self}'")
-
         return self.variables[variables].execute(function_name, *args)
-        return None
 
     def _execute_from_executor(self, line: List[str]):
         return self.executor.execute_line(line)

@@ -1,4 +1,4 @@
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Pattern, Dict, List
 import regex as re
 from .error import ArgumentNotExistError
 import logging
@@ -12,7 +12,7 @@ class ArgsResolver:
     logging = logging.getLogger("lineup_lang")
 
     def resolve(self, script: str, **kwargs: str) -> str:
-        regex: Tuple[str, int, int | None, Optional[str]] = [
+        regex: List[Tuple[Pattern, int, int | None, Optional[str]]] = [
             (r"\$\{([\w\-\_]+)(:(.+?))?\}", 1, 3),
             (r"\$([\w\-\_]+)", 1, None),
             (r"\$\((\w+):(.+?)\)", 1, 2, "{0} is deprecated")
@@ -26,7 +26,7 @@ class ArgsResolver:
                 script = self._modify_script(script, match, r, kwargs)
         return script
 
-    def _modify_script(self, script: str, match: re.Match, regex: Tuple[str, int, int | None], kwargs: str) -> str:
+    def _modify_script(self, script: str, match: re.Match, regex: Tuple[Pattern, int, int | None], kwargs: Dict[str, str]) -> str:
         """
         Modify the script with the arguments
         """
