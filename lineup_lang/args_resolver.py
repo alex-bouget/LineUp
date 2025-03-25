@@ -2,6 +2,7 @@ from typing import Tuple, Optional
 import regex as re
 from .error import ArgumentNotExistError
 import logging
+import json
 
 
 class ArgsResolver:
@@ -36,6 +37,6 @@ class ArgsResolver:
         value = kwargs.get(keyname, default_value)
         if value is None:
             raise ArgumentNotExistError(f"'{keyname}' not exist in '{kwargs}'")
-        value = value.replace("\"", "\\\"")
+        value = json.dumps(value)
         value = value.replace("#", "\\#")
-        return script.replace(match.group(0), "\"" + value + "\"")
+        return script.replace(match.group(0), value)

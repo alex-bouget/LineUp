@@ -74,7 +74,7 @@ class CoreObjectInterface(LanguageObjectInterface):
 
     A core object is used for create the main function of the language executor
     """
-    executor: Any
+    executor: LanguageExecutorInterface
     version: str = "0.0.0"
 
     def set_executor(self, executor: LanguageExecutorInterface) -> None:

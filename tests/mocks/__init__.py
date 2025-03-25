@@ -15,6 +15,10 @@ class FakeExitObject(CoreObjectInterface):
         return self.executor.line
 
 
+class CloseException(Exception):
+    pass
+
+
 class CoreObjectCloseMock(CoreObjectInterface):
     nb_close = 0
     use_throw = False
@@ -28,7 +32,7 @@ class CoreObjectCloseMock(CoreObjectInterface):
     def close(self):
         self.nb_close += 1
         if self.use_throw:
-            raise Exception("CoreObjectCloseMock, Close error")
+            raise CloseException("CoreObjectCloseMock, Close error")
         return super().close()
 
 

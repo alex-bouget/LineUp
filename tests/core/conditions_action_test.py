@@ -24,7 +24,7 @@ class ConditionsActionTest(unittest.TestCase):
     def test_if(self):
         variables = lucore.Variables({"VAR1": 1, "VAR2": 1, "VAR3": None})
         conditions = lucore.Conditions()
-        language = Language(luexec.DefaultExecutor([FakeExitObject(), variables, conditions]), False)
+        language = Language(luexec.JumperExecutor([FakeExitObject(), variables, conditions]), False)
         # GOTO 3 if VAR3 is None
         self.assertEqual(language.execute_script('IF 3 VAR VAR3 GET\nEXIT\nEXIT\nEXIT'), 1)
         # GOTO 3 if VAR1 is equal to VAR2
@@ -36,7 +36,7 @@ class ConditionsActionTest(unittest.TestCase):
     def test_not_if(self):
         variables = lucore.Variables({"VAR1": 1, "VAR2": 1, "VAR3": None})
         conditions = lucore.Conditions()
-        language = Language(luexec.DefaultExecutor([FakeExitObject(), variables, conditions]), False)
+        language = Language(luexec.JumperExecutor([FakeExitObject(), variables, conditions]), False)
         # GOTO 3 if VAR3 is not None
         self.assertEqual(language.execute_script('NOTIF 3 VAR VAR3 GET\nEXIT\nEXIT\nEXIT'), 2)
         # GOTO 3 if VAR1 is equal to VAR2
@@ -48,18 +48,19 @@ class ConditionsActionTest(unittest.TestCase):
     def test_if_else(self):
         variables = lucore.Variables({"VAR1": 1, "VAR2": 1, "VAR3": None})
         conditions = lucore.Conditions()
-        language = Language(luexec.DefaultExecutor([FakeExitObject(), variables, conditions]), False)
+        language = Language(luexec.JumperExecutor([FakeExitObject(), variables, conditions]), False)
         # GOTO 3 if VAR3 is None else GOTO 4
-        self.assertEqual(language.execute_script('IF 3 VAR VAR3 GET\nELSE 4\nEXIT\nEXIT\nEXIT'), 1)
+        self.assertEqual(language.execute_script('IF 3 VAR VAR3 GET\nELSE 4\nEXIT\nEXIT\nEXIT'), 3)
         # GOTO 3 if VAR1 is equal to VAR2 else GOTO 4
-        self.assertEqual(language.execute_script('IF 3 "VAR VAR1 GET" EQ "VAR VAR2 GET"\nELSE 4\nEXIT\nEXIT\nEXIT'), 3)
+        self.assertEqual(language.execute_script('IF 3 "VAR VAR1 GET" EQ "VAR VAR2 GET"\nELSE 4\nEXIT\nEXIT\nEXIT'), 2)
         # GOTO 3 if VAR1 is not equal to VAR2 else GOTO 4
-        self.assertEqual(language.execute_script('IF 3 "VAR VAR1 GET" NE "VAR VAR2 GET"\nELSE 4\nEXIT\nEXIT\nEXIT'), 1)
+        self.assertEqual(language.execute_script('IF 3 "VAR VAR1 GET" NE "VAR VAR2 GET"\nELSE 4\nEXIT\nEXIT\nEXIT'), 3)
 
     @timeout(2)
     def test_jump_not_goto(self):
         variables = lucore.Variables({"VAR1": 1, "VAR2": 1, "VAR3": None})
         conditions = lucore.Conditions()
-        language = Language(luexec.DefaultExecutor([FakeExitObject(), variables, conditions]), False)
+        language = Language(luexec.JumperExecutor([FakeExitObject(), variables, conditions]), False)
         # JUMP 3 if VAR3 is None
-        self.assertEqual(language.execute_script('NOTHING\nIF *+3 VAR VAR3 GET\nELSE 4\nEXIT\nEXIT\nEXIT'), 4)
+        self.assertEqual(language.execute_script('NOTHING\nIF *+3 VAR VAR3 GET\nELSE 4\nEXIT\nEXIT\nEXIT'), 3)
+        self.assertEqual(language.execute_script('NOTHING\nIF *+3 VAR VAR2 GET\nELSE 4\nEXIT\nEXIT\nEXIT'), 4)
