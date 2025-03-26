@@ -15,8 +15,8 @@ class SystemActionTest(unittest.TestCase):
     """
 
     def start_capture(self):
-        capturedOutput = io.StringIO()                 # Create StringIO.
-        sys.stdout = capturedOutput                    # Redirect stdout.
+        captured_output = io.StringIO()                 # Create StringIO.
+        sys.stdout = captured_output                    # Redirect stdout.
 
     def end_capture(self):
         value = sys.stdout.getvalue()                  # Get captured output.
