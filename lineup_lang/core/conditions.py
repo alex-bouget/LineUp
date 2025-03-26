@@ -1,7 +1,6 @@
 from ..language_object import CoreObjectInterface
 from ..line_decoder import LineDecoder
 from ..error import LineupError
-from typing import List, Tuple
 
 
 class Conditions(CoreObjectInterface):
